@@ -1,44 +1,76 @@
 <template>
-  <div id="app" :style="{backgroundColor: backgroundColor}">
+  <div id="app" :style="{color: textColor, backgroundColor: backgroundColor}">
     <Resume
       :highlightColor="highlightColor"
       :backgroundColor="backgroundColor"
       :textColor="textColor"
     />
-    <Button
-      class="dark-mode-button"
-      width="200px"
-      height="50px"
-      :color="highlightColor"
-      labelColor="textColor"
-      :label="isDarkMode ? 'Light Mode' : 'Dark Mode'"
-      @buttonClick="isDarkMode = !isDarkMode"
+    <div class="mode-button-container">
+      <Button
+        class="mode-button"
+        width="300px"
+        height="50px"
+        :color="highlightColor"
+        labelColor="textColor"
+        label="Set Custom Colors"
+        @buttonClick="showCustomModeModal = !showCustomModeModal"
+      >
+      </Button>
+      <div>
+        <input type="checkbox" id="custom-color-mode-checkbox" name="custom-color-mode-checkbox" v-model="isCustomColorMode">
+        <label for="custom-color-mode-checkbox">Custom Color Mode</label>
+      </div>
+    </div>
+    <Modal
+      :backgroundColor="backgroundColor"
+      :highlightColor="highlightColor"
+      v-if="showCustomModeModal"
     >
-    </Button>
+    <div class="color-selectors">
+      <div class="color-selector">
+        <input type="color" id="highlight-color-selector" name="highlight-color-selector" v-model="selectedHighlightColor">
+        <label for="highlight-color-selector">Highlight Color</label>
+      </div>
+      <div class="color-selector">
+        <input type="color" id="text-color-selector" name="text-color-selector" v-model="selectedTextColor">
+        <label for="text-color-selector">Text Color</label>
+      </div>
+      <div class="color-selector">
+        <input type="color" id="background-color-selector" name="background-color-selector" v-model="selectedBackgroundColor">
+        <label for="background-color-selector">Background Color</label>
+      </div>
+    </div>
+    </Modal>
   </div>
 </template>
 
 <script>
 import Button from './components/Button.vue'
 import Resume from './components/Resume.vue'
+import Modal from './components/Modal.vue'
 
 export default {
   name: 'App',
   components: {
     Button,
     Resume,
+    Modal,
   },
   data() {
     return {
-      isDarkMode: false,
-      skills: ['Vue.js', 'Node.js', 'Agile Development', 'Git Version Control', 'Remote Work'],
+      isCustomColorMode: false,
       languages: ['Javascript', 'Python', 'HTML & CSS', 'Go', 'C++'],
+      selectedHighlightColor: 'black',
+      selectedTextColor: 'black',
+      selectedBackgroundColor: 'black',
+      showCustomModeModal: false,
+      skills: ['Vue.js', 'Node.js', 'Agile Development', 'Git Version Control', 'Remote Work'],
     }
   },
   computed: {
-    highlightColor() { return this.isDarkMode ? 'red' : '#9cd2d6' },
-    backgroundColor() { return this.isDarkMode ? '#2c3e50' : '#FFFFFF' },
-    textColor() { return this.isDarkMode ? '#FFFFFF' : '#2c3e50' },
+    highlightColor() { return this.isCustomColorMode ? this.selectedHighlightColor : '#9cd2d6'},
+    backgroundColor() { return this.isCustomColorMode ? this.selectedBackgroundColor : 'white' },
+    textColor() { return this.isCustomColorMode ? this.selectedTextColor : '#2c3e50'},
   }
 }
 </script>
@@ -59,10 +91,21 @@ body {
   margin: 0px;
 }
 
-.dark-mode-button {
+.mode-button-container {
   position: absolute;
   right: 10px;
   bottom: 10px;
 
+}
+.mode-button {
+  margin: 5px;
+}
+
+.color-selectors {
+  display: flex;
+  flex-direction: column;
+}
+.color-selector {
+  padding: 10px;
 }
 </style>
